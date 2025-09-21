@@ -1,0 +1,42 @@
+# Visual Studio / Rider / VSCode
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# NuGet
+*.nupkg
+packages/
+*.snupkg
+.nuget/
+
+# Logs and temporary files
+*.log
+*.tlog
+*.tmp
+*.temp
+*.cache
+
+# OS generated files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Docker files (optional if you don’t want in Git)
+docker-compose.override.yml
+
+# JetBrains Rider
+.idea/
+
+# Others
+*.vsix
