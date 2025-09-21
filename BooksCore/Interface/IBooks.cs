@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Books_Core.Interface
 {
-    public class IBooks
+    public interface IBooks
     {
         string? Id { get; set; }
         string? Title { get; set; }
