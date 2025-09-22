@@ -28,8 +28,8 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API for managing books in a bookstore",
         Contact = new OpenApiContact
         {
-            Name = "Your Name",
-            Email = "your@email.com"
+            Name = "Chandan.G",
+            Email = "chandan.g@cmartsolutions.com"
         }
     });
     c.EnableAnnotations();
@@ -50,3 +50,6 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+// Make Program discoverable for integration tests
+public partial class Program { }

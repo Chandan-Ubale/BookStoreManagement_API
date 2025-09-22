@@ -8,11 +8,11 @@ namespace BookStoreAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class BooksController : ControllerBase   // <-- class was missing
+    public class BooksController : ControllerBase   
     {
-        private readonly IBookServices _bookService;   // <-- inside class
+        private readonly IBookServices _bookService;   
 
-        public BooksController(IBookServices bookService)  // <-- constructor inside class
+        public BooksController(IBookServices bookService)  
         {
             _bookService = bookService;
         }
