@@ -8,12 +8,12 @@ using Books_Core.Models;
 
 namespace BooksInfrastructure.Tests
 {
-    public class BookRepositoryIntegrationTests : IDisposable
+    public class BookRepositoryUnitTest : IDisposable
     {
         private readonly MongoDbRunner _runner;
         private readonly BookRepository _repo;
 
-        public BookRepositoryIntegrationTests()
+        public BookRepositoryUnitTest()
         {
             // start embedded MongoDB
             _runner = MongoDbRunner.Start();

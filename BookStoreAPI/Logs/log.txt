@@ -1,0 +1,99 @@
+2025-09-22 11:35:06Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-22 11:35:06Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-22 11:35:06Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-22 11:35:06Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-22 11:35:06Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-22 11:35:14Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-22 11:35:15Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-22 11:35:15Z [Critical] BookStoreAPI.Controllers.BooksController: GetAllBooks method execution finished.
+2025-09-22 11:36:44Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-22 11:36:44Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-22 11:36:44Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-22 11:36:44Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-22 11:36:44Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-22 11:36:56Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-22 11:36:57Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-22 11:36:57Z [Critical] BookStoreAPI.Controllers.BooksController: GetAllBooks method execution finished.
+2025-09-22 11:38:51Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-22 11:38:51Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-22 11:38:51Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-22 11:38:51Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-22 11:38:51Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-22 11:39:01Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-22 11:39:02Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-22 11:39:02Z [Warning] BookStoreAPI.Controllers.BooksController: No books found in the database.
+2025-09-22 11:39:02Z [Critical] BookStoreAPI.Controllers.BooksController: GetAllBooks method execution finished.
+2025-09-22 11:45:03Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-22 11:45:03Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-22 11:45:03Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-22 11:45:03Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-22 11:45:03Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-22 11:45:27Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-22 11:45:28Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-22 11:45:28Z [Warning] BookStoreAPI.Controllers.BooksController: No books found in the database.
+2025-09-22 11:45:28Z [Critical] BookStoreAPI.Controllers.BooksController: GetAllBooks method execution finished.
+2025-09-22 11:45:47Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-22 11:45:47Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-22 11:45:47Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-22 11:45:47Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-22 11:45:47Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-22 11:46:11Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-22 11:46:12Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-22 11:46:12Z [Warning] BookStoreAPI.Controllers.BooksController: No books found in the database.
+2025-09-22 11:46:12Z [Critical] BookStoreAPI.Controllers.BooksController: GetAllBooks method execution finished.
+2025-09-23 04:39:22Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-23 04:39:22Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-23 04:39:22Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-23 04:39:22Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-23 04:39:22Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-23 04:39:38Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-23 04:39:39Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-23 04:39:53Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-23 04:39:53Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 76 books.
+2025-09-23 04:40:06Z [Information] BookStoreAPI.Controllers.BooksController: Fetching book with ID: 68cbcb764d63d63cbcfbc6d7
+2025-09-23 04:40:06Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched book with ID: 68cbcb764d63d63cbcfbc6d7
+2025-09-23 04:40:22Z [Information] BookStoreAPI.Controllers.BooksController: Updating book with ID: 68cbcb764d63d63cbcfbc6d7
+2025-09-23 04:40:22Z [Warning] BookStoreAPI.Controllers.BooksController: Invalid data provided for updating book with ID 68cbcb764d63d63cbcfbc6d7.
+System.ArgumentException: Book price must be greater than 0. (Parameter 'Price')
+   at Books_Services.Services.BookService.ValidateBook(Books book) in C:\Users\ChandanG\source\repos\BookStoreAPI\Books_Services\Services\BookServices.cs:line 75
+   at Books_Services.Services.BookService.UpdateBook(String id, Books bookIn) in C:\Users\ChandanG\source\repos\BookStoreAPI\Books_Services\Services\BookServices.cs:line 52
+   at BookStoreAPI.Controllers.BooksController.Update(String id, Books bookIn) in C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI\Controllers\BooksController.cs:line 127
+2025-09-23 04:40:37Z [Information] BookStoreAPI.Controllers.BooksController: Updating book with ID: 68cbcb764d63d63cbcfbc6d7
+2025-09-23 04:40:37Z [Information] BookStoreAPI.Controllers.BooksController: Book with ID 68cbcb764d63d63cbcfbc6d7 updated successfully.
+2025-09-23 04:40:48Z [Information] BookStoreAPI.Controllers.BooksController: Deleting book with ID: 68cbcb764d63d63cbcfbc6d7
+2025-09-23 04:40:48Z [Information] BookStoreAPI.Controllers.BooksController: Book with ID 68cbcb764d63d63cbcfbc6d7 deleted successfully.
+2025-09-23 04:40:59Z [Information] BookStoreAPI.Controllers.BooksController: Adding a new book: string
+2025-09-23 04:41:10Z [Error] Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware: An unhandled exception has occurred while executing the request.
+System.ArgumentException: Book price must be greater than 0. (Parameter 'Price')
+   at Books_Services.Services.BookService.ValidateBook(Books book) in C:\Users\ChandanG\source\repos\BookStoreAPI\Books_Services\Services\BookServices.cs:line 75
+   at Books_Services.Services.BookService.AddBook(Books book) in C:\Users\ChandanG\source\repos\BookStoreAPI\Books_Services\Services\BookServices.cs:line 29
+   at BookStoreAPI.Controllers.BooksController.Create(Books book) in C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI\Controllers\BooksController.cs:line 83
+   at lambda_method17(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-09-23 04:41:16Z [Information] BookStoreAPI.Controllers.BooksController: Adding a new book: string
+2025-09-23 04:41:16Z [Information] BookStoreAPI.Controllers.BooksController: Book with ID 68d224ec6d12ebec1cbec738 added successfully.
+2025-09-23 04:41:51Z [Information] BookStoreAPI.Controllers.BooksController: Adding 2 books in bulk.
+2025-09-23 04:41:51Z [Information] BookStoreAPI.Controllers.BooksController: 2 books added successfully in bulk.
+2025-09-23 04:59:03Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-23 04:59:03Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-23 04:59:03Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-23 04:59:03Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-23 04:59:03Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-23 04:59:09Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
+2025-09-23 04:59:10Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 78 books.
