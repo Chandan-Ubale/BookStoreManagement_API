@@ -1,65 +1,102 @@
 ﻿using Books_Core.Interface;
 using Books_Core.Models;
+using Books_Core.Dtos;
 using Books_Infrastructure.Data;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Books_Infrastructure.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        private readonly IMongoCollection<Books> _books;
+        private readonly IMongoCollection<Books> _collection;
 
         public BookRepository(MongoDbContext context)
         {
-            _books = context.Books;
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            _collection = context.Books;
         }
 
-        public List<Books> GetAllBooks() =>
-            _books.Find(book => true).ToList();
+        // Get all books
+        public List<Books> GetAllBooks()
+        {
+            return _collection.Find(_ => true).ToList();
+        }
 
-        public Books? GetBookById(string id) =>
-            _books.Find(book => book.Id == id).FirstOrDefault();
+        // Get book by Id
+        public Books? GetBookById(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) return null;
+            return _collection.Find(b => b.Id == id).FirstOrDefault();
+        }
 
-        public void AddBook(Books book) =>
-            _books.InsertOne(book);
+        // Add a single book
+        public void AddBook(Books book)
+        {
+            if (book == null) throw new ArgumentNullException(nameof(book));
+            _collection.InsertOne(book);
+        }
 
-        public void AddBooksBulk(List<Books> books) =>
-            _books.InsertMany(books);
+        // Add multiple books
+        public void AddBooksBulk(List<Books> books)
+        {
+            if (books == null) throw new ArgumentNullException(nameof(books));
+            if (books.Count == 0) throw new ArgumentException("Book list cannot be empty.", nameof(books));
 
+            _collection.InsertMany(books);
+        }
+
+        // Update full book (replace document)
         public void UpdateBook(string id, Books bookIn)
         {
-            var updates = new List<UpdateDefinition<Books>>();
-            var updateBuilder = Builders<Books>.Update;
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
+            if (bookIn == null) throw new ArgumentNullException(nameof(bookIn));
 
-            if (!string.IsNullOrEmpty(bookIn.Title))
-                updates.Add(updateBuilder.Set(b => b.Title, bookIn.Title));
+            // Ensure the Id stays the same (fix for _id immutable error)
+            bookIn.Id = id;
 
-            if (!string.IsNullOrEmpty(bookIn.Author))
-                updates.Add(updateBuilder.Set(b => b.Author, bookIn.Author));
-
-            if (bookIn.Price > 0)
-                updates.Add(updateBuilder.Set(b => b.Price, bookIn.Price));
-
-            if (updates.Count == 0)
-                throw new ArgumentException("No valid fields provided to update.");
-
-            var updateDefinition = updateBuilder.Combine(updates);
-            var result = _books.UpdateOne(book => book.Id == id, updateDefinition);
+            var result = _collection.ReplaceOne(b => b.Id == id, bookIn);
 
             if (result.MatchedCount == 0)
-                throw new KeyNotFoundException($"Book with Id '{id}' not found.");
+                throw new KeyNotFoundException($"Book with id '{id}' not found.");
         }
 
+        // Patch book (partial update with DTO)
+        public void PatchBook(string id, BookPatchDto patchDto)
+        {
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
+            if (patchDto == null) throw new ArgumentNullException(nameof(patchDto));
+
+            var updateDef = new List<UpdateDefinition<Books>>();
+
+            if (!string.IsNullOrWhiteSpace(patchDto.Title))
+                updateDef.Add(Builders<Books>.Update.Set(b => b.Title, patchDto.Title));
+
+            if (!string.IsNullOrWhiteSpace(patchDto.Author))
+                updateDef.Add(Builders<Books>.Update.Set(b => b.Author, patchDto.Author));
+
+            if (patchDto.Price.HasValue)
+                updateDef.Add(Builders<Books>.Update.Set(b => b.Price, patchDto.Price.Value));
+
+            if (!updateDef.Any())
+                throw new ArgumentException("No valid fields provided for update.", nameof(patchDto));
+
+            var update = Builders<Books>.Update.Combine(updateDef);
+
+            var result = _collection.UpdateOne(b => b.Id == id, update);
+
+            if (result.MatchedCount == 0)
+                throw new KeyNotFoundException($"Book with id '{id}' not found.");
+        }
+
+        // Delete book by Id
         public void DeleteBook(string id)
         {
-            var result = _books.DeleteOne(book => book.Id == id);
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
+
+            var result = _collection.DeleteOne(b => b.Id == id);
+
             if (result.DeletedCount == 0)
-                throw new KeyNotFoundException($"Book with Id '{id}' not found.");
+                throw new KeyNotFoundException($"Book with id '{id}' not found.");
         }
     }
 }

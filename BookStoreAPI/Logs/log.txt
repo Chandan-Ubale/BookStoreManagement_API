@@ -97,3 +97,23 @@ System.ArgumentException: Book price must be greater than 0. (Parameter 'Price')
 2025-09-23 04:59:03Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
 2025-09-23 04:59:09Z [Information] BookStoreAPI.Controllers.BooksController: Fetching all books.
 2025-09-23 04:59:10Z [Information] BookStoreAPI.Controllers.BooksController: Successfully fetched 78 books.
+2025-09-23 06:59:08Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-23 06:59:08Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-23 06:59:08Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-23 06:59:08Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-23 06:59:08Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-23 07:02:48Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-23 07:02:48Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-23 07:02:48Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-23 07:02:48Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-23 07:02:48Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-23 07:03:20Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-23 07:03:20Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-23 07:03:20Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-23 07:03:20Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-23 07:03:20Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI
+2025-09-23 07:13:25Z [Information] Microsoft.Hosting.Lifetime: Now listening on: https://localhost:7079
+2025-09-23 07:13:25Z [Information] Microsoft.Hosting.Lifetime: Now listening on: http://localhost:5173
+2025-09-23 07:13:25Z [Information] Microsoft.Hosting.Lifetime: Application started. Press Ctrl+C to shut down.
+2025-09-23 07:13:25Z [Information] Microsoft.Hosting.Lifetime: Hosting environment: Development
+2025-09-23 07:13:25Z [Information] Microsoft.Hosting.Lifetime: Content root path: C:\Users\ChandanG\source\repos\BookStoreAPI\BookStoreAPI

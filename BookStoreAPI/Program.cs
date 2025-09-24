@@ -4,11 +4,14 @@ using Books_Infrastructure.Data;
 using Books_Infrastructure.Repositories;
 using Books_Services.Services;
 using Microsoft.OpenApi.Models;
-
 using Microsoft.Extensions.Logging;
 using System.IO;
 using Books_Core.Logger;
 
+/// <summary>
+/// Entry point of the BookStoreManagement API application.
+/// Configures services, middleware, logging, and API endpoints.
+/// </summary>
 var builder = WebApplication.CreateBuilder(args);
 
 // --------------------
@@ -17,33 +20,43 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<BookstoreDatabaseSettings>(
     builder.Configuration.GetSection("BookstoreDatabaseSettings"));
 
-// --------------------
-// 2. Register infrastructure and services
-// --------------------
+/// <summary>
+/// Registers the infrastructure and service layer dependencies 
+/// with the dependency injection (DI) container.
+/// </summary>
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookServices, BookService>();
 
 // --------------------
-// 3. Configure Logging
+// 2. Configure Logging
 // --------------------
+/// <summary>
+/// Configures logging by clearing default providers and 
+/// registering a custom <see cref="SimpleFileLoggerProvider"/>.
+/// </summary>
 // Define log file path
-//var logPath = Path.Combine(AppContext.BaseDirectory, "Logs", "log.txt");
+// var logPath = Path.Combine(AppContext.BaseDirectory, "Logs", "log.txt");
 
 // Ensure the Logs folder exists
-var logFolder = Path.GetDirectoryName("Logs/log.txt");
-if (!string.IsNullOrEmpty(logFolder) && !Directory.Exists("Logs/log.txt"))
+// Ensure the Logs folder exists
+var logFolderPath = Path.Combine(AppContext.BaseDirectory, "Logs");
+if (!Directory.Exists(logFolderPath))
 {
-    Directory.CreateDirectory(logFolder);
+    Directory.CreateDirectory(logFolderPath);
 }
 
 // Clear default providers (optional) and add custom file logger
 builder.Logging.ClearProviders();
-builder.Logging.AddProvider(new SimpleFileLoggerProvider("Logs/log.txt"));
+var logFilePath = Path.Combine(logFolderPath, "log.txt");
+builder.Logging.AddProvider(new SimpleFileLoggerProvider(logFilePath));
 
 // --------------------
-// 4. Add controllers + Swagger
+// 3. Add controllers + Swagger
 // --------------------
+/// <summary>
+/// Configures MVC controllers and Swagger/OpenAPI documentation.
+/// </summary>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -63,14 +76,17 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // --------------------
-// 5. Build the app
+// 4. Build the app
 // --------------------
 var app = builder.Build();
 
 // --------------------
-// 6. Configure middleware
+// 5. Configure middleware
 // --------------------
-// Enable Swagger only in development
+/// <summary>
+/// Configures request pipeline, enabling Swagger UI in development environment
+/// and adding controller routes with authorization middleware.
+/// </summary>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -84,11 +100,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 // --------------------
-// 7. Run
+// 6. Run
 // --------------------
+/// <summary>
+/// Starts the application.
+/// </summary>
 app.Run();
 
-// --------------------
-// 8. Make Program discoverable for integration tests
-// --------------------
+/// <summary>
+/// Partial Program class is declared to make the entry point discoverable 
+/// for integration testing purposes.
+/// </summary>
 public partial class Program { }

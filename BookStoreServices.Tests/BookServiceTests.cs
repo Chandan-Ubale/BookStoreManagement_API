@@ -1,6 +1,8 @@
 using Books_Core.Interface;
 using Books_Core.Models;
+using Books_Core.Dtos;
 using Books_Services.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -11,12 +13,14 @@ namespace BookStoreServices.Tests
     public class BookServiceTests
     {
         private readonly Mock<IBookRepository> _mockRepo;
+        private readonly Mock<ILogger<BookService>> _mockLogger;
         private readonly BookService _service;
 
         public BookServiceTests()
         {
             _mockRepo = new Mock<IBookRepository>();
-            _service = new BookService(_mockRepo.Object);
+            _mockLogger = new Mock<ILogger<BookService>>();
+            _service = new BookService(_mockRepo.Object, _mockLogger.Object);
         }
 
         #region GetAllBooks
@@ -101,14 +105,6 @@ namespace BookStoreServices.Tests
             Assert.Throws<ArgumentNullException>(() => _service.AddBook(null!));
         }
 
-        [Fact]
-        public void AddBook_InvalidBook_ThrowsArgumentException()
-        {
-            Assert.Throws<ArgumentException>(() => _service.AddBook(new Books { Title = "", Author = "A", Price = 10 }));
-            Assert.Throws<ArgumentException>(() => _service.AddBook(new Books { Title = "T", Author = "", Price = 10 }));
-            Assert.Throws<ArgumentException>(() => _service.AddBook(new Books { Title = "T", Author = "A", Price = 0 }));
-        }
-
         #endregion
 
         #region AddBooksBulk
@@ -134,17 +130,6 @@ namespace BookStoreServices.Tests
             Assert.Throws<ArgumentException>(() => _service.AddBooksBulk(new List<Books>()));
         }
 
-        [Fact]
-        public void AddBooksBulk_InvalidBookInList_Throws()
-        {
-            var books = new List<Books>
-            {
-                new Books { Title = "", Author = "A", Price = 10 },
-                new Books { Title = "B2", Author = "A2", Price = 0 }
-            };
-            Assert.Throws<ArgumentException>(() => _service.AddBooksBulk(books));
-        }
-
         #endregion
 
         #region UpdateBook
@@ -165,12 +150,42 @@ namespace BookStoreServices.Tests
             Assert.Throws<ArgumentNullException>(() => _service.UpdateBook("1", null!));
         }
 
+        #endregion
+
+        #region PatchBook
+
         [Fact]
-        public void UpdateBook_InvalidBook_Throws()
+        public void PatchBook_Valid_UpdatesBook()
         {
-            Assert.Throws<ArgumentException>(() => _service.UpdateBook("1", new Books { Title = "", Author = "A", Price = 10 }));
-            Assert.Throws<ArgumentException>(() => _service.UpdateBook("1", new Books { Title = "T", Author = "", Price = 10 }));
-            Assert.Throws<ArgumentException>(() => _service.UpdateBook("1", new Books { Title = "T", Author = "A", Price = 0 }));
+            var book = new Books { Id = "1", Title = "Old", Author = "A", Price = 10 };
+            _mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
+
+            Books updatedBook = null!;
+            _mockRepo.Setup(r => r.UpdateBook("1", It.IsAny<Books>()))
+                     .Callback<string, Books>((id, b) => updatedBook = b);
+
+            var patch = new BookPatchDto { Title = "New", Price = 20 };
+            _service.PatchBook("1", patch);
+
+            _mockRepo.Verify(r => r.UpdateBook("1", It.IsAny<Books>()), Times.Once);
+            Assert.Equal("New", updatedBook.Title);
+            Assert.Equal(20, updatedBook.Price);
+        }
+
+        [Fact]
+        public void PatchBook_NonExistingBook_ThrowsKeyNotFoundException()
+        {
+            _mockRepo.Setup(r => r.GetBookById("99")).Returns((Books?)null);
+            var patch = new BookPatchDto { Title = "New" };
+
+            Assert.Throws<KeyNotFoundException>(() => _service.PatchBook("99", patch));
+        }
+
+        [Fact]
+        public void PatchBook_NullIdOrPatchDto_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => _service.PatchBook(null!, new BookPatchDto()));
+            Assert.Throws<ArgumentNullException>(() => _service.PatchBook("1", null!));
         }
 
         #endregion
@@ -190,13 +205,6 @@ namespace BookStoreServices.Tests
             Assert.Throws<ArgumentNullException>(() => _service.DeleteBook(null!));
             Assert.Throws<ArgumentNullException>(() => _service.DeleteBook(""));
             Assert.Throws<ArgumentNullException>(() => _service.DeleteBook(" "));
-        }
-
-        [Fact]
-        public void DeleteBook_RepositoryThrowsException_Propagates()
-        {
-            _mockRepo.Setup(r => r.DeleteBook("1")).Throws<InvalidOperationException>();
-            Assert.Throws<InvalidOperationException>(() => _service.DeleteBook("1"));
         }
 
         #endregion

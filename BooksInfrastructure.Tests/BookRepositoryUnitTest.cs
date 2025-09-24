@@ -39,6 +39,43 @@ namespace BooksInfrastructure.Tests
             var all = _repo.GetAllBooks();
             Assert.Contains(all, b => b.Title == "T" && b.Author == "A");
         }
+        [Fact]
+        public void UpdateBook_ThrowsKeyNotFound_WhenMissing()
+        {
+            var missing = new Books { Id = "507f1f77bcf86cd799439011", Title = "X", Author = "Y", Price = 10 };
+            Assert.Throws<KeyNotFoundException>(() => _repo.UpdateBook(missing.Id!, missing));
+        }
+
+        [Fact]
+        public void DeleteBook_ThrowsKeyNotFound_WhenMissing()
+        {
+            Assert.Throws<KeyNotFoundException>(() => _repo.DeleteBook("507f1f77bcf86cd799439011"));
+        }
+
+        [Fact]
+        public void UpdateBook_Works()
+        {
+            var book = new Books { Title = "Old", Author = "A", Price = 10M };
+            _repo.AddBook(book);
+
+            book.Title = "New";
+            _repo.UpdateBook(book.Id!, book);
+
+            var fetched = _repo.GetBookById(book.Id!);
+            Assert.Equal("New", fetched!.Title);
+        }
+
+        [Fact]
+        public void DeleteBook_RemovesBook()
+        {
+            var book = new Books { Title = "Temp", Author = "A", Price = 10M };
+            _repo.AddBook(book);
+
+            _repo.DeleteBook(book.Id!);
+
+            var fetched = _repo.GetBookById(book.Id!);
+            Assert.Null(fetched);
+        }
 
         [Fact]
         public void GetBookById_ReturnsNullWhenMissing()

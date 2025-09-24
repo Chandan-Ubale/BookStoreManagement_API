@@ -18,11 +18,8 @@ namespace BookStoreAPI.UnitTests
         {
             _mockService = new Mock<IBookServices>();
             var logger = NullLogger<BooksController>.Instance;
-
-            // Correct order: service first, logger second
             _controller = new BooksController(_mockService.Object, logger);
         }
-
 
         [Fact]
         public void Get_ReturnsListOfBooks()
@@ -36,8 +33,44 @@ namespace BookStoreAPI.UnitTests
 
             var actionResult = _controller.Get();
 
-            var result = Assert.IsType<ActionResult<List<Books>>>(actionResult);
-            Assert.Equal(2, result.Value!.Count);
+            var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            var books = Assert.IsType<List<Books>>(okResult.Value);
+            Assert.Equal(2, books.Count);
+        }
+
+        [Fact]
+        public void UpdateBook_NotFound_ReturnsNotFound()
+        {
+            var book = new Books { Title = "Updated" };
+            var id = "1";
+            _mockService.Setup(s => s.UpdateBook(id, book)).Throws<KeyNotFoundException>();
+
+            var result = _controller.Update(id, book);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public void UpdateBook_InvalidData_ReturnsBadRequest()
+        {
+            var book = new Books { Title = "" };
+            var id = "1";
+            _mockService.Setup(s => s.UpdateBook(id, book)).Throws<ArgumentException>();
+
+            var result = _controller.Update(id, book);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public void DeleteBook_NotFound_ReturnsNotFound()
+        {
+            var id = "1";
+            _mockService.Setup(s => s.DeleteBook(id)).Throws<KeyNotFoundException>();
+
+            var result = _controller.Delete(id);
+
+            Assert.IsType<NotFoundResult>(result);
         }
 
         [Fact]
@@ -48,8 +81,9 @@ namespace BookStoreAPI.UnitTests
 
             var actionResult = _controller.Get("1");
 
-            var result = Assert.IsType<ActionResult<Books>>(actionResult);
-            Assert.Equal("Book1", result.Value!.Title);
+            var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            var returnedBook = Assert.IsType<Books>(okResult.Value);
+            Assert.Equal("Book1", returnedBook.Title);
         }
 
         [Fact]
