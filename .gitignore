@@ -6,6 +6,11 @@
 *.userosscache
 *.sln.docstates
 
+# Explicitly ignore specific txt and bat files
+all_cs_contents.txt
+ST.TXT
+export_sources.bat
+
 # Build results
 bin/
 obj/

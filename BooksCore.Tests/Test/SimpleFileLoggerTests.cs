@@ -1,37 +1,62 @@
 ﻿using Books_Core.Logger;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using Xunit;
 
 namespace BooksCore.Tests.Test
 {
-    public class SimpleFileLoggerTests
+    public class SimpleFileLoggerTests : IDisposable
     {
+        private readonly string tempPath;
+
+        public SimpleFileLoggerTests()
+        {
+            tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.log");
+        }
+
         [Fact]
         public void Log_WritesMessageToFile()
         {
-            // Arrange
-            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".log");
-            try
-            {
-                var logger = new SimpleFileLogger("TestCategory", tempPath);
+            var logger = new SimpleFileLogger("TestCategory", tempPath);
+            logger.Log(LogLevel.Information, new EventId(1), "Hello unit test", null, (s, e) => s.ToString());
+            Assert.True(File.Exists(tempPath));
+            var content = File.ReadAllText(tempPath);
+            Assert.Contains("Hello unit test", content);
+            Assert.Contains("TestCategory", content);
+        }
 
-                // Act
-                logger.Log<string>(LogLevel.Information, new EventId(1), "Hello unit test", null, (s, e) => s);
+        [Fact]
+        public void IsEnabled_ShouldRespectLogLevel()
+        {
+            var logger = new SimpleFileLogger("TestCategory", tempPath);
+            Assert.True(logger.IsEnabled(LogLevel.Information));
+            Assert.False(logger.IsEnabled(LogLevel.Debug));
+        }
 
-                // Assert
-                Assert.True(File.Exists(tempPath), "Log file should exist");
-                var content = File.ReadAllText(tempPath);
-                Assert.Contains("Hello unit test", content);
-                Assert.Contains("TestCategory", content);
-            }
-            finally
+        [Fact]
+        public void Log_ShouldHandleNullMessageWithoutException()
+        {
+            var logger = new SimpleFileLogger("TestCategory", tempPath);
+            var exception = Record.Exception(() =>
+                logger.Log<object>(LogLevel.Information, new EventId(), null, null, (s, e) => s == null ? string.Empty : s.ToString()));
+            Assert.Null(exception);
+        }
+
+        [Fact]
+        public void Log_ShouldHandleEmptyMessageWithoutException()
+        {
+            var logger = new SimpleFileLogger("TestCategory", tempPath);
+            var exception = Record.Exception(() =>
+                logger.Log<object>(LogLevel.Information, new EventId(), "", null, (s, e) => s == null ? string.Empty : s.ToString()));
+            Assert.Null(exception);
+        }
+
+        public void Dispose()
+        {
+            if (File.Exists(tempPath))
             {
-                if (File.Exists(tempPath)) File.Delete(tempPath);
+                File.Delete(tempPath);
             }
         }
     }

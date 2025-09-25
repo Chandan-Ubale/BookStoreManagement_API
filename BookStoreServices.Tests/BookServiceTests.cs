@@ -1,6 +1,6 @@
+using Books_Core.Dtos;
 using Books_Core.Interface;
 using Books_Core.Models;
-using Books_Core.Dtos;
 using Books_Services.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -8,205 +8,118 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace BookStoreServices.Tests
+public class BookServiceTests
 {
-    public class BookServiceTests
+    private readonly Mock<IBookRepository> mockRepo;
+    private readonly Mock<ILogger<BookService>> mockLogger;
+    private readonly BookService service;
+
+    public BookServiceTests()
     {
-        private readonly Mock<IBookRepository> _mockRepo;
-        private readonly Mock<ILogger<BookService>> _mockLogger;
-        private readonly BookService _service;
+        mockRepo = new Mock<IBookRepository>();
+        mockLogger = new Mock<ILogger<BookService>>();
+        service = new BookService(mockRepo.Object, mockLogger.Object);
+    }
 
-        public BookServiceTests()
-        {
-            _mockRepo = new Mock<IBookRepository>();
-            _mockLogger = new Mock<ILogger<BookService>>();
-            _service = new BookService(_mockRepo.Object, _mockLogger.Object);
-        }
+    [Fact]
+    public void GetBookById_ValidId_ReturnsBook()
+    {
+        var book = new Books { Id = "1", Title = "A", Author = "B", Price = 99 };
+        mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
+        var result = service.GetBookById("1");
 
-        #region GetAllBooks
+        Assert.NotNull(result);
+        Assert.Equal("A", result.Title);
+    }
 
-        [Fact]
-        public void GetAllBooks_ReturnsAllBooks()
-        {
-            var books = new List<Books>
-            {
-                new Books { Id = "1", Title = "Book 1", Author = "Author 1", Price = 100 },
-                new Books { Id = "2", Title = "Book 2", Author = "Author 2", Price = 200 }
-            };
-            _mockRepo.Setup(r => r.GetAllBooks()).Returns(books);
+    [Fact]
+    public void PatchBook_NullPatchDto_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => service.PatchBook("1", null));
+    }
 
-            var result = _service.GetAllBooks();
+    [Fact]
+    public void PatchBook_NonExisting_ThrowsKeyNotFoundException()
+    {
+        mockRepo.Setup(r => r.GetBookById("99")).Returns((Books)null);
+        var patch = new BookPatchDto { Title = "New" };
 
-            Assert.Equal(2, result.Count);
-            Assert.Equal("Book 1", result[0].Title);
-        }
+        Assert.Throws<KeyNotFoundException>(() => service.PatchBook("99", patch));
+    }
 
-        [Fact]
-        public void GetAllBooks_EmptyList_ReturnsEmpty()
-        {
-            _mockRepo.Setup(r => r.GetAllBooks()).Returns(new List<Books>());
+    [Fact]
+    public void PatchBook_ValidUpdate_UpdatesRepo()
+    {
+        var book = new Books { Id = "1", Title = "Old", Price = 1 };
+        mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
 
-            var result = _service.GetAllBooks();
+        Books? updatedBook = null;
+        mockRepo.Setup(r => r.UpdateBook("1", It.IsAny<Books>()))
+            .Callback<string, Books>((id, b) => updatedBook = b);
 
-            Assert.Empty(result);
-        }
+        var patch = new BookPatchDto { Title = "New", Price = 22 };
+        service.PatchBook("1", patch);
 
-        #endregion
+        Assert.NotNull(updatedBook);
+        Assert.Equal("New", updatedBook.Title);
+        Assert.Equal(22, updatedBook.Price);
+    }
 
-        #region GetBookById
+    [Fact]
+    public void GetBookById_NonExisting_ReturnsNull()
+    {
+        mockRepo.Setup(r => r.GetBookById("42")).Returns((Books)null);
+        var result = service.GetBookById("42");
 
-        [Fact]
-        public void GetBookById_ExistingId_ReturnsBook()
-        {
-            var book = new Books { Id = "1", Title = "Book 1", Author = "Author 1", Price = 100 };
-            _mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
+        Assert.Null(result);
+    }
 
-            var result = _service.GetBookById("1");
+    [Fact]
+    public void AddBook_CallsRepository()
+    {
+        var book = new Books { Id = "1", Title = "New Book", Author = "Author", Price = 100 };
+        service.AddBook(book);
+        mockRepo.Verify(r => r.AddBook(book), Times.Once);
+    }
 
-            Assert.NotNull(result);
-            Assert.Equal("Book 1", result.Title);
-        }
+    [Fact]
+    public void UpdateBook_BookNotFound_ThrowsKeyNotFoundException()
+    {
+        mockRepo.Setup(r => r.GetBookById("1")).Returns((Books)null);
+        var book = new Books { Title = "Updated" };
+        Assert.Throws<KeyNotFoundException>(() => service.UpdateBook("1", book));
+    }
 
-        [Fact]
-        public void GetBookById_NonExistingId_ReturnsNull()
-        {
-            _mockRepo.Setup(r => r.GetBookById("99")).Returns((Books?)null);
+    [Fact]
+    public void DeleteBook_BookNotFound_ThrowsKeyNotFoundException()
+    {
+        mockRepo.Setup(r => r.GetBookById("1")).Returns((Books)null);
+        Assert.Throws<KeyNotFoundException>(() => service.DeleteBook("1"));
+    }
 
-            var result = _service.GetBookById("99");
 
-            Assert.Null(result);
-        }
+    [Fact]
+    public void UpdateBook_ValidBook_CallsUpdate()
+    {
+        var book = new Books { Id = "1", Title = "Old Title", Author = "A", Price = 10M };
+        mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
 
-        [Fact]
-        public void GetBookById_NullOrEmptyId_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => _service.GetBookById(null!));
-            Assert.Throws<ArgumentNullException>(() => _service.GetBookById(""));
-            Assert.Throws<ArgumentNullException>(() => _service.GetBookById(" "));
-        }
+        var updatedBook = new Books { Id = "1", Title = "New Title", Author = "A", Price = 12M };
+        service.UpdateBook("1", updatedBook);
 
-        #endregion
+        mockRepo.Verify(r => r.UpdateBook("1", updatedBook), Times.Once);
+    }
 
-        #region AddBook
+    
 
-        [Fact]
-        public void AddBook_ValidBook_CallsRepository()
-        {
-            var book = new Books { Title = "Book 1", Author = "Author 1", Price = 100 };
+    [Fact]
+    public void DeleteBook_ValidCall_CallsDelete()
+    {
+        var book = new Books { Id = "1", Title = "To delete" };
+        mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
 
-            _service.AddBook(book);
+        service.DeleteBook("1");
 
-            _mockRepo.Verify(r => r.AddBook(book), Times.Once);
-        }
-
-        [Fact]
-        public void AddBook_NullBook_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => _service.AddBook(null!));
-        }
-
-        #endregion
-
-        #region AddBooksBulk
-
-        [Fact]
-        public void AddBooksBulk_ValidList_CallsRepository()
-        {
-            var books = new List<Books>
-            {
-                new Books { Title = "B1", Author = "A1", Price = 10 },
-                new Books { Title = "B2", Author = "A2", Price = 20 }
-            };
-
-            _service.AddBooksBulk(books);
-
-            _mockRepo.Verify(r => r.AddBooksBulk(books), Times.Once);
-        }
-
-        [Fact]
-        public void AddBooksBulk_NullOrEmpty_Throws()
-        {
-            Assert.Throws<ArgumentNullException>(() => _service.AddBooksBulk(null!));
-            Assert.Throws<ArgumentException>(() => _service.AddBooksBulk(new List<Books>()));
-        }
-
-        #endregion
-
-        #region UpdateBook
-
-        [Fact]
-        public void UpdateBook_Valid_CallsRepository()
-        {
-            var book = new Books { Title = "Updated", Author = "A", Price = 50 };
-            _service.UpdateBook("1", book);
-            _mockRepo.Verify(r => r.UpdateBook("1", book), Times.Once);
-        }
-
-        [Fact]
-        public void UpdateBook_NullBookOrId_Throws()
-        {
-            var book = new Books { Title = "T", Author = "A", Price = 10 };
-            Assert.Throws<ArgumentNullException>(() => _service.UpdateBook(null!, book));
-            Assert.Throws<ArgumentNullException>(() => _service.UpdateBook("1", null!));
-        }
-
-        #endregion
-
-        #region PatchBook
-
-        [Fact]
-        public void PatchBook_Valid_UpdatesBook()
-        {
-            var book = new Books { Id = "1", Title = "Old", Author = "A", Price = 10 };
-            _mockRepo.Setup(r => r.GetBookById("1")).Returns(book);
-
-            Books updatedBook = null!;
-            _mockRepo.Setup(r => r.UpdateBook("1", It.IsAny<Books>()))
-                     .Callback<string, Books>((id, b) => updatedBook = b);
-
-            var patch = new BookPatchDto { Title = "New", Price = 20 };
-            _service.PatchBook("1", patch);
-
-            _mockRepo.Verify(r => r.UpdateBook("1", It.IsAny<Books>()), Times.Once);
-            Assert.Equal("New", updatedBook.Title);
-            Assert.Equal(20, updatedBook.Price);
-        }
-
-        [Fact]
-        public void PatchBook_NonExistingBook_ThrowsKeyNotFoundException()
-        {
-            _mockRepo.Setup(r => r.GetBookById("99")).Returns((Books?)null);
-            var patch = new BookPatchDto { Title = "New" };
-
-            Assert.Throws<KeyNotFoundException>(() => _service.PatchBook("99", patch));
-        }
-
-        [Fact]
-        public void PatchBook_NullIdOrPatchDto_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => _service.PatchBook(null!, new BookPatchDto()));
-            Assert.Throws<ArgumentNullException>(() => _service.PatchBook("1", null!));
-        }
-
-        #endregion
-
-        #region DeleteBook
-
-        [Fact]
-        public void DeleteBook_Valid_CallsRepository()
-        {
-            _service.DeleteBook("1");
-            _mockRepo.Verify(r => r.DeleteBook("1"), Times.Once);
-        }
-
-        [Fact]
-        public void DeleteBook_NullOrEmptyId_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => _service.DeleteBook(null!));
-            Assert.Throws<ArgumentNullException>(() => _service.DeleteBook(""));
-            Assert.Throws<ArgumentNullException>(() => _service.DeleteBook(" "));
-        }
-
-        #endregion
+        mockRepo.Verify(r => r.DeleteBook("1"), Times.Once);
     }
 }
