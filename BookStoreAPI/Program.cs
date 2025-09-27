@@ -26,6 +26,10 @@ builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookServices, BookService>();
 
+// register user repo & service
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 // --------------------
 // 3. Configure Logging
 // --------------------
@@ -99,7 +103,18 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+// --------------------
+// 4b. Configure Authorization
+// Default fallback: require Authenticated, Verified, and Admin/Moderator
+// --------------------
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .RequireRole("Admin", "Moderator")
+        .RequireClaim("IsVerified", "True")
+        .Build();
+});
 
 // --------------------
 // 5. Add Controllers + Swagger (with Bearer auth support)
@@ -153,6 +168,22 @@ builder.Services.AddSwaggerGen(c =>
 // 6. Build the app
 // --------------------
 var app = builder.Build();
+
+// --------------------
+// 6a. Optional: Seed an admin user if DB is empty
+// --------------------
+using (var scope = app.Services.CreateScope())
+{
+    var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+    var repo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+    if (!repo.GetAll().Any())
+    {
+        var adminUser = userService.Register("admin", "admin@example.com", "Admin@123"); // change password!
+        repo.SetVerified(adminUser.Id!, true);
+        repo.UpdateRoles(adminUser.Id!, new[] { "Admin" });
+    }
+}
 
 // --------------------
 // 7. Configure middleware

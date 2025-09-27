@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Books_Core.Interface;
+using Books_Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,54 +14,58 @@ namespace BookStoreAPI.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
+        private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IUserService userService, IConfiguration configuration, ILogger<AuthController> logger)
         {
+            _userService = userService;
             _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            // 1. Validate user (for now, hardcoded)
-            var user = ValidateUser(request.Username, request.Password);
+            if (request == null || string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+                return Unauthorized("Invalid username or password");
+
+            var user = _userService.GetByUsername(request.Username);
             if (user == null)
                 return Unauthorized("Invalid username or password");
 
-            // 2. Create JWT token
-            var token = GenerateJwtToken(user);
+            // verify password (BCrypt)
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                return Unauthorized("Invalid username or password");
 
+            // DO NOT issue token if not verified
+            if (!user.IsVerified)
+                return Unauthorized("User is not verified. Please contact an admin.");
+
+            var token = GenerateJwtToken(user);
             return Ok(new { Token = token });
         }
 
-        private UserModel? ValidateUser(string username, string password)
-        {
-            // In real apps → check DB. For now, hardcoded users.
-            if (username == "User1" && password == "admin123")
-                return new UserModel { Username = "User1", Role = "Admin" };
-
-            if (username == "User2" && password == "mod123")
-                return new UserModel { Username = "User2", Role = "Moderator" };
-
-            if (username == "User3" && password == "readonly123")
-                return new UserModel { Username = "User3", Role = "ReadOnly" };
-
-            return null;
-        }
-
-        private string GenerateJwtToken(UserModel user)
+        private string GenerateJwtToken(User user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
-
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim("IsVerified", user.IsVerified.ToString())
             };
+
+            // add multiple role claims
+            foreach (var r in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, r));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
@@ -72,16 +79,9 @@ namespace BookStoreAPI.Controllers
         }
     }
 
-    // Simple DTOs
     public class LoginRequest
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-
-    public class UserModel
-    {
-        public string Username { get; set; }
-        public string Role { get; set; }
+        public string Username { get; set; } = null!;
+        public string Password { get; set; } = null!;
     }
 }

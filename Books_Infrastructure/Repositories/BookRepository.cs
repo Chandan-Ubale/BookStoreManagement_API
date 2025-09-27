@@ -13,14 +13,11 @@ namespace Books_Infrastructure.Repositories
         public BookRepository(MongoDbContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
-            _collection = context.Books;
+            _collection = context.BooksCollection; // ✅ FIXED
         }
 
         // Get all books
-        public List<Books> GetAllBooks()
-        {
-            return _collection.Find(_ => true).ToList();
-        }
+        public List<Books> GetAllBooks() => _collection.Find(_ => true).ToList();
 
         // Get book by Id
         public Books? GetBookById(string id)
@@ -51,8 +48,7 @@ namespace Books_Infrastructure.Repositories
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
             if (bookIn == null) throw new ArgumentNullException(nameof(bookIn));
 
-            // Ensure the Id stays the same (fix for _id immutable error)
-            bookIn.Id = id;
+            bookIn.Id = id; // ensure immutable _id
 
             var result = _collection.ReplaceOne(b => b.Id == id, bookIn);
 
@@ -66,21 +62,21 @@ namespace Books_Infrastructure.Repositories
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
             if (patchDto == null) throw new ArgumentNullException(nameof(patchDto));
 
-            var updateDef = new List<UpdateDefinition<Books>>();
+            var updates = new List<UpdateDefinition<Books>>();
 
             if (!string.IsNullOrWhiteSpace(patchDto.Title))
-                updateDef.Add(Builders<Books>.Update.Set(b => b.Title, patchDto.Title));
+                updates.Add(Builders<Books>.Update.Set(b => b.Title, patchDto.Title));
 
             if (!string.IsNullOrWhiteSpace(patchDto.Author))
-                updateDef.Add(Builders<Books>.Update.Set(b => b.Author, patchDto.Author));
+                updates.Add(Builders<Books>.Update.Set(b => b.Author, patchDto.Author));
 
             if (patchDto.Price.HasValue)
-                updateDef.Add(Builders<Books>.Update.Set(b => b.Price, patchDto.Price.Value));
+                updates.Add(Builders<Books>.Update.Set(b => b.Price, patchDto.Price.Value));
 
-            if (!updateDef.Any())
+            if (!updates.Any())
                 throw new ArgumentException("No valid fields provided for update.", nameof(patchDto));
 
-            var update = Builders<Books>.Update.Combine(updateDef);
+            var update = Builders<Books>.Update.Combine(updates);
 
             var result = _collection.UpdateOne(b => b.Id == id, update);
 

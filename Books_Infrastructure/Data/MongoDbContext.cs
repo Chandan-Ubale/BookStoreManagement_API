@@ -13,14 +13,18 @@ namespace Books_Infrastructure.Data
     public class MongoDbContext
     {
         private readonly IMongoDatabase _database;
+        public IMongoCollection<Books> BooksCollection { get; }
+        public IMongoCollection<User> UsersCollection { get; }
 
-        public MongoDbContext(IOptions<BookstoreDatabaseSettings> settings)
+        public MongoDbContext(IOptions<BookstoreDatabaseSettings> options)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            _database = client.GetDatabase(settings.Value.DatabaseName);
-        }
+            var settings = options.Value ?? throw new ArgumentNullException(nameof(options));
+            var client = new MongoClient(settings.ConnectionString);
+            _database = client.GetDatabase(settings.DatabaseName);
 
-        public IMongoCollection<Books> Books =>
-            _database.GetCollection<Books>("Books");
+            BooksCollection = _database.GetCollection<Books>(settings.BooksCollectionName);
+            // Users collection name set to "Users"
+            UsersCollection = _database.GetCollection<User>("Users");
+        }
     }
 }
